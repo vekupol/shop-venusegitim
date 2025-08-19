@@ -15,7 +15,6 @@ export default function CheckoutPage() {
         return;
       }
       try {
-        // PayTR sepet formatı: [urun_adi, birim_fiyat (TL string), adet]
         const basket: [string, string, number][] = items.map((i) => [
           i.name,
           (i.priceKurus / 100).toFixed(2),
@@ -37,8 +36,9 @@ export default function CheckoutPage() {
         } else {
           setErr(data.reason || "Token alınamadı.");
         }
-      } catch (e: any) {
-        setErr(e.message || "Bilinmeyen hata");
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Bilinmeyen hata";
+        setErr(msg);
       }
     })();
   }, [items]);
@@ -68,19 +68,13 @@ export default function CheckoutPage() {
       <h2 className="text-3xl poetsen-one-regular text-primary">Ödeme</h2>
       <div>Toplam: {fmtTRY(totalKurus())}</div>
 
-      {/* iFrame */}
-      <script src="https://www.paytr.com/js/iframeResizer.min.js"></script>
+      {/* iFrame + iFrameResizer */}
       <iframe
         id="paytriframe"
         src={`https://www.paytr.com/odeme/guvenli/${token}`}
         frameBorder={0}
         scrolling="no"
         style={{ width: "100%", height: 850, borderRadius: 8, background: "#fff" }}
-      />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `iFrameResize({}, '#paytriframe')`,
-        }}
       />
     </div>
   );

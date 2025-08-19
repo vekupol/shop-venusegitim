@@ -99,10 +99,17 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
     // Örn: { status: "success", token: "..." } veya { status:"failed", reason:"..." }
     return NextResponse.json(data);
-  } catch (e: any) {
+  } catch (e: unknown) {
+  if (e instanceof Error) {
     return NextResponse.json(
-      { status: "failed", reason: e?.message || "Sunucu hatası" },
+      { status: "failed", reason: e.message },
       { status: 500 },
     );
   }
+  return NextResponse.json(
+    { status: "failed", reason: "Bilinmeyen hata" },
+    { status: 500 },
+  );
+}
+
 }
